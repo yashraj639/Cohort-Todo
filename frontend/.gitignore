@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Env
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build output
+build/
+dist/
+.cache/
+
+# Testing
+coverage/
+
+# Misc
+.DS_Store
