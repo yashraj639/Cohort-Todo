@@ -48,6 +48,7 @@ const AuthForm = ({ isSignUp }) => {
           { withCredentials: true }
         );
         navigate("/todo");
+        return alert("Signin Successful");
       }
     } catch (err) {
       console.error(err.response?.data || err.message);
