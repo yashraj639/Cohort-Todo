@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from "lucide-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -36,8 +37,8 @@ const AuthForm = ({ isSignUp }) => {
           },
           { withCredentials: true }
         );
+        toast.success("🎉 Login successful!");
         navigate("/todo");
-        return alert("Account Created Successfully");
       } else {
         const res = await axios.post(
           `${BASE_URL}/api/auth/user/signin`,
@@ -47,11 +48,11 @@ const AuthForm = ({ isSignUp }) => {
           },
           { withCredentials: true }
         );
+        toast.success("🎉 Signin successful!");
         navigate("/todo");
-        return alert("Signin Successful");
       }
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
