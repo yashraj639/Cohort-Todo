@@ -51,7 +51,7 @@ const AuthForm = ({ isSignUp }) => {
         toast.success("🎉 Signin successful!");
         navigate("/todo");
       }
-    } catch (err) {
+    } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
