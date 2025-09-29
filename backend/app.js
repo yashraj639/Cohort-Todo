@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 
 const authRoutes = require("./routes/auth.routes");
 const todoRoutes = require("./routes/todo.routes");
+const streakRoutes = require("./routes/streak.routes");
 
 const allowedOrigins = [
   "https://mytodo-inky.vercel.app",
@@ -31,6 +32,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/todo", todoRoutes);
+app.use("/api/streak", streakRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
