@@ -34,7 +34,7 @@ async function signupUser(req, res) {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "none",
   });
 
@@ -67,10 +67,10 @@ async function signinUser(req, res) {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "none",
   });
-  
+
   res.status(200).json({ message: "Signin successful", token });
 }
 
