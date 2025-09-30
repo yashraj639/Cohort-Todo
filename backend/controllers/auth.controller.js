@@ -38,7 +38,7 @@ async function signupUser(req, res) {
     sameSite: "none",
   });
 
-  res.status(201).json({ message: "User created successfully", token });
+  res.status(201).json({ message: "User created successfully" });
 }
 
 async function signinUser(req, res) {
@@ -71,7 +71,7 @@ async function signinUser(req, res) {
     sameSite: "none",
   });
 
-  res.status(200).json({ message: "Signin successful", token });
+  res.status(200).json({ message: "Signin successful" });
 }
 
 module.exports = {
