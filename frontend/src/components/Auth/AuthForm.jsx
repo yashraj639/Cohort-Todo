@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from "lucide-react";
-import axios from "axios";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
@@ -23,35 +23,47 @@ const AuthForm = ({ isSignUp }) => {
     e.preventDefault();
 
     try {
+      let endpoint = "";
+      let payload = {};
+
       if (isSignUp) {
         if (formData.password !== formData.confirmPassword) {
-          return alert("Passwords do not match");
+          return toast.error("❌ Passwords do not match");
         }
-        const res = await axios.post(
-          `${BASE_URL}/api/auth/user/signup`,
-          {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          },
-          { withCredentials: true }
-        );
-        navigate("/todo");
-        return alert("Account Created Successfully");
+        endpoint = "/api/auth/user/signup";
+        payload = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+        };
       } else {
-        const res = await axios.post(
-          `${BASE_URL}/api/auth/user/signin`,
-          {
-            email: formData.email,
-            password: formData.password,
-          },
-          { withCredentials: true }
-        );
-        navigate("/todo");
-        return alert("Signin Successful");
+        endpoint = "/api/auth/user/signin";
+        payload = {
+          email: formData.email,
+          password: formData.password,
+        };
       }
+
+      const res = await fetch(`${BASE_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // cookies
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      toast.success(
+        isSignUp ? "🎉 Account Created Successfully" : "🎉 Signin Successful"
+      );
+      navigate("/todo");
     } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.error(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -67,10 +79,7 @@ const AuthForm = ({ isSignUp }) => {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 
-text-white placeholder-gray-400 
-focus:outline-none focus:border-white/40 
-transition-all"
+            className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-white/40 transition-all"
             required={isSignUp}
           />
         </div>
@@ -85,12 +94,8 @@ transition-all"
           placeholder="Email Address"
           value={formData.email}
           onChange={handleInputChange}
-          className="w-full pl-10 pr-4 py-3 rounded-lg 
-bg-white/10 backdrop-blur-md 
-border border-white/20 
-text-white placeholder-gray-400 
-focus:outline-none focus:border-white/40 
-transition-all"
+          className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20
+          text-white placeholder-gray-400 focus:outline-none focus:border-white/40 transition-all"
           required
         />
       </div>
@@ -119,6 +124,11 @@ transition-all"
           )}
         </button>
       </div>
+      {formData.password.length > 0 && formData.password.length < 6 && (
+        <p className="text-xs text-red-300 mt-1.5">
+          Password must be at least 6 characters
+        </p>
+      )}
 
       {/* Confirm Password Field */}
       {isSignUp && (

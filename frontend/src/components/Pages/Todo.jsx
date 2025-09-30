@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Edit3, Check } from "lucide-react";
-import axios from "axios";
-import Pomodoro from "./Pomodoro";
+
+import StreakTracker from "./StreakTracker";
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const Todo = () => {
@@ -14,35 +14,43 @@ const Todo = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/api/todo/todos`, {
-          withCredentials: true,
+        const res = await fetch(`${BASE_URL}/api/todo/todos`, {
+          method: "GET",
+          credentials: "include",
         });
-        setTodos(res.data.todos);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Failed to fetch todos");
+        setTodos(data.todos);
       } catch (err) {
-        console.error("Error fetching todos:", err);
+        console.error("Error fetching todos:", err.message);
       }
     };
     fetchTodos();
   }, []);
 
-  // Todo functions (simplified for demo - replace with your API calls)
+  // Add Todo
   const addTodo = async () => {
     if (!newTodo.trim()) return;
     try {
-      const res = await axios.post(
-        `${BASE_URL}/api/todo/create`,
-        { title: newTodo },
-        { withCredentials: true }
-      );
-      const createdTodo = res.data.todo ?? {
-        _id: res.data.todoId,
+      const res = await fetch(`${BASE_URL}/api/todo/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title: newTodo }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to add todo");
+
+      const createdTodo = data.todo ?? {
+        _id: data.todoId,
         title: newTodo,
         completed: false,
       };
+
       setTodos((prev) => [...prev, createdTodo]);
       setNewTodo("");
     } catch (err) {
-      console.error("Error adding todo:", err.response?.data || err.message);
+      console.error("Error adding todo:", err.message);
     }
   };
 
@@ -50,52 +58,67 @@ const Todo = () => {
     setEditingId(todo._id);
     setEditingText(todo.title);
   };
-
   const cancelEditing = () => {
     setEditingId(null);
     setEditingText("");
   };
 
+  // Update Todo text
   const updateTodoText = async (id) => {
     if (!editingText.trim()) return cancelEditing();
     try {
-      const res = await axios.put(
-        `${BASE_URL}/api/todo/update/${id}`,
-        { title: editingText.trim() },
-        { withCredentials: true }
-      );
+      const res = await fetch(`${BASE_URL}/api/todo/update/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ title: editingText.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to update todo");
+
       setTodos(todos.map((t) => (t._id === id ? res.data.todo : t)));
       cancelEditing();
-    } catch (error) {
-      console.error("Error updating todo:", err);
+    } catch (err) {
+      console.error("Error updating todo:", err.message);
       cancelEditing();
     }
   };
 
+  // Toggle Todo
   const toggleTodo = async (id) => {
     const todo = todos.find((t) => t._id === id);
     try {
-      const res = await axios.put(
-        `${BASE_URL}/api/todo/update/${id}`,
-        { title: todo.title, completed: !todo.completed },
-        { withCredentials: true }
-      );
-      setTodos(todos.map((t) => (t._id === id ? res.data.todo : t)));
+      const res = await fetch(`${BASE_URL}/api/todo/update/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title: todo.title,
+          completed: !todo.completed,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to toggle todo");
+
+      setTodos(todos.map((t) => (t._id === id ? data.todo : t)));
     } catch (err) {
-      console.error("Error updating todo:", err);
+      console.error("Error toggling todo:", err.message);
     }
   };
 
-  // Delete
+  // Delete Todo
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/api/todo/delete/${id}`, {
-        withCredentials: true,
+      const res = await fetch(`${BASE_URL}/api/todo/delete/${id}`, {
+        method: "DELETE",
+        credentials: "include",
       });
+      if (!res.ok) throw new Error("Failed to delete todo");
+
       setTodos(todos.filter((t) => t._id !== id));
       if (editingId === id) cancelEditing();
     } catch (err) {
-      console.error("Error deleting todo:", err);
+      console.error("Error deleting todo:", err.message);
     }
   };
 
@@ -103,8 +126,8 @@ const Todo = () => {
     <div className="min-h-screen bg-gradient-to-bl from-gray-900 via-gray-800 to-black  relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto p-3 sm:p-4 md:p-6 grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 min-h-screen">
         <div className="absolute inset-0 z-0 backdrop-blur-sm isolate" />
-        {/* Left Side - Clock & Pomodoro */}
-        <Pomodoro />
+        {/* Left Side - Streak Tracker */}
+        <StreakTracker />
 
         {/* Right Side - Todo List */}
         <div className="flex flex-col justify-center">
@@ -113,7 +136,7 @@ const Todo = () => {
               <div className="text-center mb-6 sm:mb-8">
                 <h2 className="text-2xl sm:text-3xl font-medium text-white"></h2>
                 <div className="mt-2 text-sm sm:text-base text-white/60">
-                  {todos.filter((t) => !t.completed).length} of {todos.length}{" "}
+                  {todos.filter((t) => !t.completed).length} of {todos.length}
                   remaining
                 </div>
               </div>
