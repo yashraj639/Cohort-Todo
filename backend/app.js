@@ -8,22 +8,10 @@ const authRoutes = require("./routes/auth.routes");
 const todoRoutes = require("./routes/todo.routes");
 const streakRoutes = require("./routes/streak.routes");
 
-const allowedOrigins = [
-  "https://mytodo-inky.vercel.app",
-  "http://localhost:5173",
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: ["https://mytodo-inky.vercel.app", "http://localhost:5173"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: "*", // auto-handle all
 };
 
 app.use(cors(corsOptions));

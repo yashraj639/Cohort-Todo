@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { Flame, Trophy, Target, TrendingUp } from "lucide-react";
 
 const StreakTracker = () => {
-  // Clock state
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  // Streak state
   const [streakData, setStreakData] = useState({
     current: 0,
     longest: 0,
@@ -14,7 +12,6 @@ const StreakTracker = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Clock effect
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -22,7 +19,6 @@ const StreakTracker = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // Fetch streak data on mount
   useEffect(() => {
     fetchStreakData();
   }, []);
@@ -46,7 +42,6 @@ const StreakTracker = () => {
     }
   };
 
-  // Format time for clock
   const formatTime = (date) => {
     return date.toLocaleTimeString("en-US", {
       hour12: false,
@@ -56,7 +51,6 @@ const StreakTracker = () => {
     });
   };
 
-  // Format date
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -66,7 +60,6 @@ const StreakTracker = () => {
     });
   };
 
-  // Calculate streak percentage (out of 30 days)
   const getStreakPercentage = () => {
     return Math.min((streakData.current / 30) * 100, 100);
   };

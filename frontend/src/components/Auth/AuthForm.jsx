@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
@@ -44,26 +45,21 @@ const AuthForm = ({ isSignUp }) => {
         };
       }
 
-      const res = await fetch(`${BASE_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // cookies
-        body: JSON.stringify(payload),
+      const { data } = await axios.post(`${BASE_URL}${endpoint}`, payload, {
+        withCredentials: true,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
 
       toast.success(
         isSignUp ? "🎉 Account Created Successfully" : "🎉 Signin Successful"
       );
+      if (data.token) localStorage.setItem("token", data.token);
       navigate("/todo");
     } catch (err) {
-      console.error(err.message);
-      toast.error(err.message);
+      const message =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      console.error("Error:", message);
+      toast.error(message);
     }
   };
 

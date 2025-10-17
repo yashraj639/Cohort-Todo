@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Edit3, Check } from "lucide-react";
+import axios from "axios";
 
 import StreakTracker from "./StreakTracker";
+
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const Todo = () => {
@@ -10,36 +12,38 @@ const Todo = () => {
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  // Fetch todos
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/api/todo/todos`, {
-          method: "GET",
-          credentials: "include",
+        const token = localStorage.getItem("token");
+
+        const { data } = await axios.get(`${BASE_URL}/api/todo/todos`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Failed to fetch todos");
+
         setTodos(data.todos);
       } catch (err) {
-        console.error("Error fetching todos:", err.message);
+        const errorMsg =
+          err.response?.data?.message ||
+          "Failed to fetch todos. Please try again.";
+        console.error("Error fetching todos:", errorMsg);
       }
     };
+
     fetchTodos();
   }, []);
 
-  // Add Todo
   const addTodo = async () => {
     if (!newTodo.trim()) return;
     try {
-      const res = await fetch(`${BASE_URL}/api/todo/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ title: newTodo }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to add todo");
+      const { data } = await axios.post(
+        `${BASE_URL}/api/todo/create`,
+        { title: newTodo },
+        { withCredentials: true }
+      );
 
       const createdTodo = data.todo ?? {
         _id: data.todoId,
@@ -50,7 +54,9 @@ const Todo = () => {
       setTodos((prev) => [...prev, createdTodo]);
       setNewTodo("");
     } catch (err) {
-      console.error("Error adding todo:", err.message);
+      const errorMsg =
+        err.response?.data?.message || "Failed to add todo. Please try again.";
+      console.error("Error adding todo:", errorMsg);
     }
   };
 
@@ -63,62 +69,59 @@ const Todo = () => {
     setEditingText("");
   };
 
-  // Update Todo text
   const updateTodoText = async (id) => {
     if (!editingText.trim()) return cancelEditing();
-    try {
-      const res = await fetch(`${BASE_URL}/api/todo/update/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ title: editingText.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to update todo");
 
-      setTodos(todos.map((t) => (t._id === id ? res.data.todo : t)));
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/todo/update/${id}`,
+        { title: editingText.trim() },
+        { withCredentials: true }
+      );
+
+      setTodos((prev) => prev.map((t) => (t._id === id ? data.todo : t)));
       cancelEditing();
     } catch (err) {
-      console.error("Error updating todo:", err.message);
+      const errorMsg =
+        err.response?.data?.message ||
+        "Failed to update todo. Please try again.";
+      console.error("Error updating todo:", errorMsg);
       cancelEditing();
     }
   };
 
-  // Toggle Todo
   const toggleTodo = async (id) => {
     const todo = todos.find((t) => t._id === id);
-    try {
-      const res = await fetch(`${BASE_URL}/api/todo/update/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          title: todo.title,
-          completed: !todo.completed,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to toggle todo");
+    if (!todo) return;
 
-      setTodos(todos.map((t) => (t._id === id ? data.todo : t)));
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/api/todo/update/${id}`,
+        { title: todo.title, completed: !todo.completed },
+        { withCredentials: true }
+      );
+
+      setTodos((prev) => prev.map((t) => (t._id === id ? data.todo : t)));
     } catch (err) {
-      console.error("Error toggling todo:", err.message);
+      const errorMsg =
+        err.response?.data?.message || "Failed to toggle todo status.";
+      console.error("Error toggling todo:", errorMsg);
     }
   };
 
-  // Delete Todo
   const deleteTodo = async (id) => {
     try {
-      const res = await fetch(`${BASE_URL}/api/todo/delete/${id}`, {
-        method: "DELETE",
-        credentials: "include",
+      await axios.delete(`${BASE_URL}/api/todo/delete/${id}`, {
+        withCredentials: true,
       });
-      if (!res.ok) throw new Error("Failed to delete todo");
 
-      setTodos(todos.filter((t) => t._id !== id));
+      setTodos((prev) => prev.filter((t) => t._id !== id));
       if (editingId === id) cancelEditing();
     } catch (err) {
-      console.error("Error deleting todo:", err.message);
+      const errorMsg =
+        err.response?.data?.message ||
+        "Failed to delete todo. Please try again.";
+      console.error("Error deleting todo:", errorMsg);
     }
   };
 

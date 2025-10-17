@@ -4,7 +4,7 @@ function auth(req, res, next) {
   let token = null;
 
   const authHeader = req.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer ")) {
+  if (authHeader) {
     token = authHeader.split(" ")[1];
   }
 
@@ -20,7 +20,7 @@ function auth(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.userId = decoded.id; // Attach user ID to the request object
+    req.userId = decoded.id;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid or expired token." });
