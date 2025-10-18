@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { Flame, Trophy, Target, TrendingUp } from "lucide-react";
+import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+
 
 const StreakTracker = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -26,17 +29,19 @@ const StreakTracker = () => {
   const fetchStreakData = async () => {
     try {
       setLoading(true);
-      const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
-      const response = await fetch(`${BASE_URL}/api/streak/`, {
-        credentials: "include",
+
+      const { data } = await axios.get(`${BASE_URL}/api/streak/`, {
+        withCredentials: true,
       });
-      const data = await response.json();
 
       if (data.success) {
         setStreakData(data.streak);
       }
-    } catch (error) {
-      console.error("Error fetching streak:", error);
+    } catch (err) {
+      console.error(
+        "Error fetching streak:",
+        err.response?.data || err.message
+      );
     } finally {
       setLoading(false);
     }

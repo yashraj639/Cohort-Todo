@@ -15,21 +15,16 @@ const Todo = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         const { data } = await axios.get(`${BASE_URL}/api/todo/todos`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           withCredentials: true,
         });
 
         setTodos(data.todos);
       } catch (err) {
-        const errorMsg =
+        const message =
           err.response?.data?.message ||
           "Failed to fetch todos. Please try again.";
-        console.error("Error fetching todos:", errorMsg);
+        console.error("Error fetching todos:", message);
       }
     };
 

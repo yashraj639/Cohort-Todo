@@ -52,7 +52,6 @@ const AuthForm = ({ isSignUp }) => {
       toast.success(
         isSignUp ? "🎉 Account Created Successfully" : "🎉 Signin Successful"
       );
-      if (data.token) localStorage.setItem("token", data.token);
       navigate("/todo");
     } catch (err) {
       const message =

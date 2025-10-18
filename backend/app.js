@@ -9,10 +9,14 @@ const todoRoutes = require("./routes/todo.routes");
 const streakRoutes = require("./routes/streak.routes");
 
 const corsOptions = {
-  origin: ["https://mytodo-inky.vercel.app", "http://localhost:5173"],
+  origin: ["https://mytodo-inky.vercel.app"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 200,
 };
+
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 app.use(express.json());
