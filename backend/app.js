@@ -9,7 +9,7 @@ const todoRoutes = require("./routes/todo.routes");
 const streakRoutes = require("./routes/streak.routes");
 
 const corsOptions = {
-  origin: "https://mytodo-inky.vercel.app",
+  origin: "https://momentum-arc.vercel.app",
   credentials: true,
   allowedHeaders: ["Content-Type", "Authorization"],
   optionsSuccessStatus: 200,
