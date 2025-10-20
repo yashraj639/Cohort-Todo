@@ -13,6 +13,13 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/todo", todoRoutes);
 
+app.use(
+  cors({
+    origin: "https://cohort-todo.vercel.app",
+    credentials: true,
+  })
+);
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
