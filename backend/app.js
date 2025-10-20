@@ -8,9 +8,15 @@ const authRoutes = require("./routes/auth.routes");
 const todoRoutes = require("./routes/todo.routes");
 const streakRoutes = require("./routes/streak.routes");
 
-app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: ["*"],
+    credentials: true,
+  })
+);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/todo", todoRoutes);
