@@ -10,8 +10,8 @@ const todoRoutes = require("./routes/todo.routes");
 app.use(cookieParser());
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
-app.use("/api/todo", todoRoutes);
+app.use("/auth", authRoutes);
+app.use("/todo", todoRoutes);
 
 app.use(
   cors({
