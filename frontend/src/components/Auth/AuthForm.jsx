@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
@@ -45,7 +44,7 @@ const AuthForm = ({ isSignUp }) => {
         };
       }
 
-      const { data } = await axios.post(`${BASE_URL}${endpoint}`, payload, {
+      const { data } = await axios.post(`${endpoint}`, payload, {
         withCredentials: true,
       });
 

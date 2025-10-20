@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Edit3, Check } from "lucide-react";
 import axios from "axios";
-const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -58,7 +57,7 @@ const Todo = () => {
     if (!newTodo.trim()) return;
     try {
       const { data } = await axios.post(
-        `${BASE_URL}/api/todo/create`,
+        `/api/todo/create`,
         { title: newTodo },
         { withCredentials: true }
       );
@@ -92,7 +91,7 @@ const Todo = () => {
 
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/api/todo/update/${id}`,
+        `/api/todo/update/${id}`,
         { title: editingText.trim() },
         { withCredentials: true }
       );
@@ -114,7 +113,7 @@ const Todo = () => {
 
     try {
       const { data } = await axios.put(
-        `${BASE_URL}/api/todo/update/${id}`,
+        `/api/todo/update/${id}`,
         { title: todo.title, completed: !todo.completed },
         { withCredentials: true }
       );
@@ -129,7 +128,7 @@ const Todo = () => {
 
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/api/todo/delete/${id}`, {
+      await axios.delete(`/api/todo/delete/${id}`, {
         withCredentials: true,
       });
 
