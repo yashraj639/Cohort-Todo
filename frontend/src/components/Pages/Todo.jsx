@@ -37,7 +37,7 @@ const Todo = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const { data } = await axios.get(`${BASE_URL}/api/todo/todos`, {
+        const { data } = await axios.get(`/api/todo/todos`, {
           withCredentials: true,
         });
 
