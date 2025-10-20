@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Edit3, Check } from "lucide-react";
 import axios from "axios";
-
-import StreakTracker from "./StreakTracker";
-
 const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const Todo = () => {
@@ -11,6 +8,32 @@ const Todo = () => {
   const [newTodo, setNewTodo] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString("en-US", {
+      hour12: false,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -124,8 +147,17 @@ const Todo = () => {
     <div className="min-h-screen bg-gradient-to-bl from-gray-900 via-gray-800 to-black  relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto p-3 sm:p-4 md:p-6 grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 min-h-screen">
         <div className="absolute inset-0 z-0 backdrop-blur-sm isolate" />
-        {/* Left Side - Streak Tracker */}
-        <StreakTracker />
+        {/* Left Side  */}
+        <div className="rounded-2xl sm:rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl p-4 sm:p-6 md:p-8">
+          <div className="text-center">
+            <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-white mb-2 font-mono tracking-wide">
+              {formatTime(currentTime)}
+            </div>
+            <div className="text-sm sm:text-base md:text-lg text-white/70">
+              {formatDate(currentTime)}
+            </div>
+          </div>
+        </div>
 
         {/* Right Side - Todo List */}
         <div className="flex flex-col justify-center">
