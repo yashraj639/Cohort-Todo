@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://cohort-todo-backend.vercel.app/api/:path*"
+      "destination": "https://cohort-todo-backend.vercel.app/:path*"
     },
     {
       "source": "/(.*)",
