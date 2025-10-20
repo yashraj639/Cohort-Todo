@@ -8,14 +8,7 @@ const authRoutes = require("./routes/auth.routes");
 const todoRoutes = require("./routes/todo.routes");
 const streakRoutes = require("./routes/streak.routes");
 
-const corsOptions = {
-  origin: "https://momentum-arc.vercel.app",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 
