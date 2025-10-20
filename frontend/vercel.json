@@ -1,14 +1,12 @@
 {
-  "version": 2,
-  "builds": [{ "src": "vite.config.js", "use": "@vercel/static-build" }],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "https://cohort-todo-backend.vercel.app/api/$1"
+      "source": "/api/:path*",
+      "destination": "https://cohort-todo-backend.vercel.app/api/:path*"
     },
     {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
