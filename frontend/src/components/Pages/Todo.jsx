@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Plus, X, Edit3, Check } from "lucide-react";
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
 
 const Todo = () => {
   const [todos, setTodos] = useState([]);
@@ -37,7 +38,7 @@ const Todo = () => {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const { data } = await axios.get(`/api/todo/todos`, {
+        const { data } = await axios.get(`${BASE_URL}/api/todo/todos`, {
           withCredentials: true,
         });
 
@@ -57,7 +58,7 @@ const Todo = () => {
     if (!newTodo.trim()) return;
     try {
       const { data } = await axios.post(
-        `/api/todo/create`,
+        `${BASE_URL}/api/todo/create`,
         { title: newTodo },
         { withCredentials: true }
       );
@@ -91,7 +92,7 @@ const Todo = () => {
 
     try {
       const { data } = await axios.put(
-        `/api/todo/update/${id}`,
+        `${BASE_URL}/api/todo/update/${id}`,
         { title: editingText.trim() },
         { withCredentials: true }
       );
@@ -113,7 +114,7 @@ const Todo = () => {
 
     try {
       const { data } = await axios.put(
-        `/api/todo/update/${id}`,
+        `${BASE_URL}/api/todo/update/${id}`,
         { title: todo.title, completed: !todo.completed },
         { withCredentials: true }
       );
@@ -128,7 +129,7 @@ const Todo = () => {
 
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`/api/todo/delete/${id}`, {
+      await axios.delete(`${BASE_URL}/api/todo/delete/${id}`, {
         withCredentials: true,
       });
 
@@ -146,7 +147,7 @@ const Todo = () => {
     <div className="min-h-screen bg-gradient-to-bl from-gray-900 via-gray-800 to-black  relative overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto p-3 sm:p-4 md:p-6 grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 min-h-screen">
         <div className="absolute inset-0 z-0 backdrop-blur-sm isolate" />
-        {/* Left Side  */}
+        {/* Left Side */}
         <div className="rounded-2xl sm:rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl p-4 sm:p-6 md:p-8">
           <div className="text-center">
             <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-white mb-2 font-mono tracking-wide">
